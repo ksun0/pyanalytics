@@ -1,1 +1,22 @@
 .DS_Store
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Django stuff:
+*.log
+.static_storage/
+.media/
+local_settings.py
+
+# Google API
+client_secrets.json
