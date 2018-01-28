@@ -20,3 +20,4 @@ local_settings.py
 
 # Google API
 client_secrets.json
+service_account.json
