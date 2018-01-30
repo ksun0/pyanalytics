@@ -12,11 +12,17 @@ venv.bak/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Django stuff:
+# Django/Flask stuff:
+*.pyc
+*.pyo
 *.log
 .static_storage/
 .media/
 local_settings.py
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
 
 # Google API
 client_secrets.json
