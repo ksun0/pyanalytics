@@ -21,7 +21,7 @@
     font-size: 200%;
     font-weight: 700;
   }
-  
+
   .dashboard {
     height: 100%;
     text-align: center;
@@ -39,8 +39,11 @@
 
 <body>
   <div class="dashboard">
+    <a href="{% url 'index' %}">Home</a>
     <h1>How pyanalytics Works</h1>
-    <p>{{ data }}</p>
+    {% for r in response%}
+    <p>{{r}}</p>
+    {% endfor %}
   </div>
 </body>
 </html>
