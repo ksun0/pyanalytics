@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} | Report List {% endblock %}
+
+{% block content %}
+    <h1>Report List</h1>
+
+    {% if report_list %}
+    <ul>
+      {% for report in report_list %}
+      <li>
+        <a href="{{ report.get_absolute_url }}">{{ report.name }}</a> ({{report.viewId}})
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no reports on your account.</p>
+    {% endif %}
+{% endblock %}

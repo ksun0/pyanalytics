@@ -15,8 +15,8 @@ class Report(models.Model):
         """
         return self.name + ": " + str(self.viewId)
 
-    # def get_absolute_url(self):
-    #     """
-    #     Returns the url to access a particular instance of the model.
-    #     """
-    #     return reverse('report', args=[str(self.viewId)])
+    def get_absolute_url(self):
+        """
+        Returns the url to access a particular instance of the model.
+        """
+        return reverse('report-detail', args=[str(self.id)])
