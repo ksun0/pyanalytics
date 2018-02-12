@@ -12,11 +12,16 @@ def index(request):
     response = get_report(analytics)
     r = get_response(response)
     r = r.split('\n')
+
+    # Number of visits to this view, as counted in the session variable.
+    num_visits=request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits+1
+
     # Render the HTML template index.html with the data in the context variable
     return render(
         request,
         'index.html',
-        context={'response':r},
+        context={'response':r, 'num_visits': num_visits},
     )
 
 # Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
