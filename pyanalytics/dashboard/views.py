@@ -19,11 +19,12 @@ def index(request):
         context={'response':r},
     )
 
-
+# Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SERVICE_ACCOUNT_EMAIL = 'ksun-349@pyanalytics-193319.iam.gserviceaccount.com'
 KEY_FILE_LOCATION = 'service_account.json'
 VIEW_ID = '157537579'
+# 148174905
 
 def initialize_analyticsreporting():
     """Initializes an Analytics Reporting API V4 service object.
