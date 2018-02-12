@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Report
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
@@ -23,6 +24,27 @@ def index(request):
         'index.html',
         context={'response':r, 'num_visits': num_visits},
     )
+
+from django.views import generic # class based generic views
+
+class ReportListView(generic.ListView):
+    model = Report
+    context_object_name = 'report_list'   # your own list of reports as a template variable
+    template_name = 'report_list.html'  # Template name/location
+
+    def get_queryset(self):
+        return Report.objects.all() # Get all reports
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(ReportListView, self).get_context_data(**kwargs)
+        # Create any data and add it to the context
+        context['some_data'] = 'This is just some data'
+        return context
+
+class ReportDetailView(generic.DetailView):
+    model = Report
+    template_name = 'report_detail.html'
 
 # Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']

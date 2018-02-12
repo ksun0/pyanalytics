@@ -7,9 +7,6 @@ html, body {
 
 body, h1, h2, h3, h4, h5 {
   font-family: 'Ubuntu', sans-serif;
-  color: white;
-  font-size: 200%;
-  font-weight: 700;
 }
 
 .wrapper {
@@ -34,4 +31,5 @@ body, h1, h2, h3, h4, h5 {
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
+  color: white;
 }
