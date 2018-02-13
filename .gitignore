@@ -27,3 +27,6 @@ __pycache__/
 # Google API
 client_secrets.json
 service_account.json
+
+# IDE
+.idea/

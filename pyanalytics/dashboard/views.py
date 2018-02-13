@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from .models import Report
+import json
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
+
 
 # Create your views here.
 def index(request):
@@ -10,8 +12,8 @@ def index(request):
     View function for home page of site.
     """
     # Number of visits to this view, as counted in the session variable.
-    num_visits=request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits+1
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
 
     # Render the HTML template index.html with the data in the context variable
     return render(
@@ -20,15 +22,17 @@ def index(request):
         context={'num_visits': num_visits},
     )
 
-from django.views import generic # class based generic views
+
+from django.views import generic  # class based generic views
+
 
 class ReportListView(generic.ListView):
     model = Report
-    context_object_name = 'report_list'   # your own list of reports as a template variable
+    context_object_name = 'report_list'  # your own list of reports as a template variable
     template_name = 'report_list.html'  # Template name/location
 
     def get_queryset(self):
-        return Report.objects.all() # Get all reports
+        return Report.objects.all()  # Get all reports
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the context
@@ -36,6 +40,7 @@ class ReportListView(generic.ListView):
         # Create any data and add it to the context
         context['some_data'] = 'This is just some data'
         return context
+
 
 class ReportDetailView(generic.DetailView):
     model = Report
@@ -46,7 +51,7 @@ class ReportDetailView(generic.DetailView):
         context = super(ReportDetailView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
         VIEW_ID = self.object.viewId
-        analytics = initialize_analyticsreporting()
+        analytics = initialize_analytics_reporting()
         response = get_report(analytics, str(VIEW_ID))
         r = get_response(response)
         r = r.split('\n')
@@ -55,10 +60,12 @@ class ReportDetailView(generic.DetailView):
 
 # Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
-SERVICE_ACCOUNT_EMAIL = 'ksun-349@pyanalytics-193319.iam.gserviceaccount.com'
 KEY_FILE_LOCATION = 'service_account.json'
+with open('service_account.json') as json_data:
+    d = json.load(json_data)
+    SERVICE_ACCOUNT_EMAIL = d['client_email']
 
-def initialize_analyticsreporting():
+def initialize_analytics_reporting():
     """Initializes an Analytics Reporting API V4 service object.
     Returns: An authorized Analytics Reporting API V4 service object.
     """
@@ -75,14 +82,15 @@ def get_report(analytics, VIEW_ID):
     return analytics.reports().batchGet(
         body={
             'reportRequests': [
-            {
-                'viewId': VIEW_ID,
-                'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
-                'metrics': [{'expression': 'ga:sessions'}],
-                'dimensions': [{'name': 'ga:country'}]
-            }]
+                {
+                    'viewId': VIEW_ID,
+                    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+                    'metrics': [{'expression': 'ga:sessions'}],
+                    'dimensions': [{'name': 'ga:country'}]
+                }]
         }
     ).execute()
+
 
 def get_response(response):
     """Parses and prints the Analytics Reporting API V4 response.
