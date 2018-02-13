@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Report
 import json
+
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
@@ -58,12 +59,14 @@ class ReportDetailView(generic.DetailView):
         context['response'] = r
         return context
 
+
 # Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 KEY_FILE_LOCATION = 'service_account.json'
 with open('service_account.json') as json_data:
     d = json.load(json_data)
     SERVICE_ACCOUNT_EMAIL = d['client_email']
+
 
 def initialize_analytics_reporting():
     """Initializes an Analytics Reporting API V4 service object.
@@ -73,6 +76,7 @@ def initialize_analytics_reporting():
     # Build the service object.
     analytics = build('analyticsreporting', 'v4', credentials=credentials)
     return analytics
+
 
 def get_report(analytics, VIEW_ID):
     """Queries the Analytics Reporting API V4.
