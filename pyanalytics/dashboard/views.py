@@ -9,11 +9,6 @@ def index(request):
     """
     View function for home page of site.
     """
-    analytics = initialize_analyticsreporting()
-    response = get_report(analytics)
-    r = get_response(response)
-    r = r.split('\n')
-
     # Number of visits to this view, as counted in the session variable.
     num_visits=request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits+1
@@ -22,7 +17,7 @@ def index(request):
     return render(
         request,
         'index.html',
-        context={'response':r, 'num_visits': num_visits},
+        context={'num_visits': num_visits},
     )
 
 from django.views import generic # class based generic views
@@ -46,12 +41,22 @@ class ReportDetailView(generic.DetailView):
     model = Report
     template_name = 'report_detail.html'
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(ReportDetailView, self).get_context_data(**kwargs)
+        # Create any data and add it to the context
+        VIEW_ID = self.object.viewId
+        analytics = initialize_analyticsreporting()
+        response = get_report(analytics, str(VIEW_ID))
+        r = get_response(response)
+        r = r.split('\n')
+        context['response'] = r
+        return context
+
 # Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SERVICE_ACCOUNT_EMAIL = 'ksun-349@pyanalytics-193319.iam.gserviceaccount.com'
 KEY_FILE_LOCATION = 'service_account.json'
-VIEW_ID = '157537579'
-# 148174905
 
 def initialize_analyticsreporting():
     """Initializes an Analytics Reporting API V4 service object.
@@ -62,7 +67,7 @@ def initialize_analyticsreporting():
     analytics = build('analyticsreporting', 'v4', credentials=credentials)
     return analytics
 
-def get_report(analytics):
+def get_report(analytics, VIEW_ID):
     """Queries the Analytics Reporting API V4.
     Args: analytics: An authorized Analytics Reporting API V4 service object.
     Returns: The Analytics Reporting API V4 response.
