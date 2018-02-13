@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Report Name: {{ report.name }}</h1>
+
+  <p><strong>View Id:</strong> {{ report.viewId }}</p>
+
+  {% for r in response%}
+  <p>{{r}}</p>
+  {% endfor %}
+
+{% endblock %}

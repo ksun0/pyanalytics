@@ -4,10 +4,7 @@
 
 {% block content %}
 <div class="dashboard">
-  <h1>How pyanalytics Works</h1>
-  {% for r in response%}
-  <p>{{r}}</p>
-  {% endfor %}
+  <h1>pyanalytics</h1>
   <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
 </div>
 {% endblock %}
