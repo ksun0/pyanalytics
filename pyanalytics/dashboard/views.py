@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from .models import Report
 import json
-
+from django.views import generic  # class based generic views
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
 
-# Create your views here.
 def index(request):
     """
     View function for home page of site.
@@ -22,9 +21,6 @@ def index(request):
         'index.html',
         context={'num_visits': num_visits},
     )
-
-
-from django.views import generic  # class based generic views
 
 
 class ReportListView(generic.ListView):
@@ -102,9 +98,9 @@ def get_response(response):
     """
     r = ""
     for report in response.get('reports', []):
-        columnHeader = report.get('columnHeader', {})
-        dimensionHeaders = columnHeader.get('dimensions', [])
-        metricHeaders = columnHeader.get('metricHeader', {}).get('metricHeaderEntries', [])
+        column_header = report.get('columnHeader', {})
+        dimensionHeaders = column_header.get('dimensions', [])
+        metricHeaders = column_header.get('metricHeader', {}).get('metricHeaderEntries', [])
 
         for row in report.get('data', {}).get('rows', []):
             dimensions = row.get('dimensions', [])
