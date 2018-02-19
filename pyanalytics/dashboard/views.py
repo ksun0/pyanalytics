@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from .models import Report
 import json
+from django.views import generic  # class based generic views
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
 
-# Create your views here.
 def index(request):
     """
     View function for home page of site.
@@ -21,9 +21,6 @@ def index(request):
         'index.html',
         context={'num_visits': num_visits},
     )
-
-
-from django.views import generic  # class based generic views
 
 
 class ReportListView(generic.ListView):
@@ -58,12 +55,14 @@ class ReportDetailView(generic.DetailView):
         context['response'] = r
         return context
 
+
 # Instructions available at: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/service-py
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 KEY_FILE_LOCATION = 'service_account.json'
 with open('service_account.json') as json_data:
     d = json.load(json_data)
     SERVICE_ACCOUNT_EMAIL = d['client_email']
+
 
 def initialize_analytics_reporting():
     """Initializes an Analytics Reporting API V4 service object.
@@ -73,6 +72,7 @@ def initialize_analytics_reporting():
     # Build the service object.
     analytics = build('analyticsreporting', 'v4', credentials=credentials)
     return analytics
+
 
 def get_report(analytics, VIEW_ID):
     """Queries the Analytics Reporting API V4.
@@ -98,9 +98,9 @@ def get_response(response):
     """
     r = ""
     for report in response.get('reports', []):
-        columnHeader = report.get('columnHeader', {})
-        dimensionHeaders = columnHeader.get('dimensions', [])
-        metricHeaders = columnHeader.get('metricHeader', {}).get('metricHeaderEntries', [])
+        column_header = report.get('columnHeader', {})
+        dimensionHeaders = column_header.get('dimensions', [])
+        metricHeaders = column_header.get('metricHeader', {}).get('metricHeaderEntries', [])
 
         for row in report.get('data', {}).get('rows', []):
             dimensions = row.get('dimensions', [])
