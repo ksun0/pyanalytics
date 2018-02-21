@@ -55,7 +55,7 @@ ROOT_URLCONF = 'pyanalytics.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['./templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,3 +127,8 @@ STATICFILES_DIRS = [
 
 # python manage.py collectstatic, gather all static files, good for production
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
