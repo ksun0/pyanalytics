@@ -6,7 +6,7 @@ from .models import Report
 
 # Define the admin class
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ('name', 'viewId')
+    list_display = ('user', 'name', 'viewId')
 
 # Register the admin class with the associated model
 admin.site.register(Report, ReportAdmin)

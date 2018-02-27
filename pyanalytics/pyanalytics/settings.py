@@ -55,7 +55,7 @@ ROOT_URLCONF = 'pyanalytics.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['./templates',],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), './templates', 'templates', '/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +132,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 LOGIN_REDIRECT_URL = '/'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_HOST_USER = 'pyanalytics.io@gmail.com'
+
+EMAIL_HOST_PASSWORD = 'pyanalytics'
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True

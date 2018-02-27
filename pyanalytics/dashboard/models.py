@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.urls import reverse  # Used to generate URLs by reversing the URL patterns
 
 
@@ -6,6 +7,7 @@ class Report(models.Model):
     """
     Model representing an Analytics Report
     """
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=200)
     viewId = models.IntegerField(help_text="Enter the View ID for your analytics website")
 

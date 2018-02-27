@@ -2,9 +2,19 @@ from django.shortcuts import render
 from .models import Report
 import json
 from django.views import generic  # class based generic views
+from django.contrib.auth.mixins import LoginRequiredMixin
+"""Emailing"""
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
+
+
 
 
 def index(request):
@@ -15,6 +25,18 @@ def index(request):
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
 
+    plaintext = get_template('email.txt')
+    htmly = get_template('email.html')
+    print(request.user.username)
+    d = { 'username': request.user.username }
+
+    subject, from_email, to = 'hello', 'pyanalytics.io@gmail.com', 'kevinsun0@gmail.com'
+    text_content = plaintext.render(d)
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
     # Render the HTML template index.html with the data in the context variable
     return render(
         request,
@@ -23,13 +45,13 @@ def index(request):
     )
 
 
-class ReportListView(generic.ListView):
+class ReportListView(LoginRequiredMixin, generic.ListView):
     model = Report
     context_object_name = 'report_list'  # your own list of reports as a template variable
     template_name = 'report_list.html'  # Template name/location
 
     def get_queryset(self):
-        return Report.objects.all()  # Get all reports
+        return Report.objects.filter(user=self.request.user)  # Get all reports
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the context
@@ -39,9 +61,13 @@ class ReportListView(generic.ListView):
         return context
 
 
-class ReportDetailView(generic.DetailView):
+class ReportDetailView(LoginRequiredMixin, generic.DetailView):
     model = Report
     template_name = 'report_detail.html'
+
+    # msg_plain = render_to_string('templates/email.txt')
+    # msg_html = render_to_string('templates/email.html')
+    # send_mail('Report from pyanalytics', msg_plain, 'noreply@pyanalytics.com', [request.user.email],html_message=msg_html)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the context
@@ -114,3 +140,36 @@ def get_response(response):
                 for metricHeader, value in zip(metricHeaders, values.get('values')):
                     r += (metricHeader.get('name') + ': ' + value + '\n')
     return r
+
+# def email_one(request):
+#     subject = "I am a text email"
+#     to = ['buddy@buddylindsey.com']
+#     from_email = 'test@example.com'
+#
+#     ctx = {
+#         'user': 'buddy',
+#         'purchase': 'Books'
+#     }
+#
+#     message = render_to_string('main/email/email.txt', ctx)
+#
+#     EmailMessage(subject, message, to=to, from_email=from_email).send()
+#
+#     return HttpResponse('email_one')
+#
+# def email_two(request):
+#     subject = "I am an HTML email"
+#     to = ['buddy@buddylindsey.com']
+#     from_email = 'test@example.com'
+#
+#     ctx = {
+#         'user': 'buddy',
+#         'purchase': 'Books'
+#     }
+#
+#     message = get_template('main/email/email.html').render(Context(ctx))
+#     msg = EmailMessage(subject, message, to=to, from_email=from_email)
+#     msg.content_subtype = 'html'
+#     msg.send()
+#
+#     return HttpResponse('email_two')
