@@ -4,18 +4,11 @@ import json
 from django.views import generic  # class based generic views
 from django.contrib.auth.mixins import LoginRequiredMixin
 """Emailing"""
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
 """Analytics Reporting API V4."""
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
-
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
-from django.template import Context
-
-
-
 
 def index(request):
     """
@@ -24,18 +17,6 @@ def index(request):
     # Number of visits to this view, as counted in the session variable.
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
-
-    plaintext = get_template('email.txt')
-    htmly = get_template('email.html')
-    print(request.user.username)
-    d = { 'username': request.user.username }
-
-    subject, from_email, to = 'hello', 'pyanalytics.io@gmail.com', 'kevinsun0@gmail.com'
-    text_content = plaintext.render(d)
-    html_content = htmly.render(d)
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
 
     # Render the HTML template index.html with the data in the context variable
     return render(
@@ -65,10 +46,6 @@ class ReportDetailView(LoginRequiredMixin, generic.DetailView):
     model = Report
     template_name = 'report_detail.html'
 
-    # msg_plain = render_to_string('templates/email.txt')
-    # msg_html = render_to_string('templates/email.html')
-    # send_mail('Report from pyanalytics', msg_plain, 'noreply@pyanalytics.com', [request.user.email],html_message=msg_html)
-
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the context
         context = super(ReportDetailView, self).get_context_data(**kwargs)
@@ -78,6 +55,30 @@ class ReportDetailView(LoginRequiredMixin, generic.DetailView):
         response = get_report(analytics, str(VIEW_ID))
         r = get_response(response)
         r = r.split('\n')
+
+        total_sessions = 0
+
+        for i in r[2::3]: # every 3rd item is view count of a specific country
+            total_sessions += int(''.join(filter(str.isdigit, i)))
+
+        # algorithm, for more complex, use standard deviation or jackknife. How to determine a spike in data?
+
+        if total_sessions > 30:
+
+
+            plaintext = get_template('email.txt')
+            htmly = get_template('email.html')
+
+            d = { 'username': self.request.user.username, 'report_name': self.object.name, 'view_id': VIEW_ID,
+                 'total_sessions': total_sessions}
+
+            subject, from_email, to = 'Report from Pyanalytics', 'pyanalytics.io@gmail.com', 'kevinsun0@gmail.com'
+            text_content = plaintext.render(d)
+            html_content = htmly.render(d)
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
         context['response'] = r
         return context
 
