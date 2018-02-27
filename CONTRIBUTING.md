@@ -4,6 +4,10 @@
 
 Before contributing, be sure to familiarize yourself with the project objective, as defined in [`README.md`](README.md).
 
+## What Can I Do?
+
+For features to contribute, check out issues or [TODO.md](docs/TODO.md).
+
 ## Getting Started
 
 1. Fork, then clone the repo: `git clone git@github.com:your-username/pyanalytics.git`
