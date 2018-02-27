@@ -14,9 +14,9 @@ Python analytics library that analyzes data on your websites and provides recomm
 
 ## Quick Demos
 
-[![Viewing the report dashboard](docs/img/report_dashboard.png)](#Getting Started)
+![Viewing the report dashboard](docs/img/report_dashboard.png)
 
-[![Receiving spike emails in website sessions](docs/img/spike_email.png)](#Getting Started)
+![Receiving spike emails in website sessions](docs/img/spike_email.png)
 
 ---
 
